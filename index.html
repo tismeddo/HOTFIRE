@@ -1,0 +1,447 @@
+<title>HOTFIRE Trial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: clinical protocol dossier. Narrow reading column, wide figures for the study pathway; teal = observational cohort, ember = randomized pilot. */
+:root{
+  --bg:#F4F6F7; --surface:#FFFFFF; --ink:#13202A; --muted:#55636E; --rule:#D5DCE1;
+  --ember:#C8410E; --ember-soft:#FBE7DE; --teal:#0E6E68; --teal-soft:#DDF0EE;
+  --display:"Archivo","Arial Narrow",Arial,sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F161B; --surface:#172129; --ink:#E6ECEF; --muted:#9AA8B2; --rule:#2B3944;
+  --ember:#F07A45; --ember-soft:#3A2219; --teal:#4FC1B7; --teal-soft:#15312F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F161B; --surface:#172129; --ink:#E6ECEF; --muted:#9AA8B2; --rule:#2B3944;
+  --ember:#F07A45; --ember-soft:#3A2219; --teal:#4FC1B7; --teal-soft:#15312F; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;padding:0 20px}
+a{color:inherit;text-decoration-color:var(--ember);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--ember);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto}
+.col{max-width:68ch}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.1;margin:0}
+h2{font-size:clamp(28px,4vw,38px);font-weight:800;font-stretch:88%;letter-spacing:-.01em}
+h3{font-size:19px;font-weight:700;font-stretch:95%}
+p{margin:0}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tn{font-variant-numeric:tabular-nums}
+
+/* nav */
+nav.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--rule);margin:0 -20px;padding:0 20px}
+nav.top .wrap{display:flex;gap:20px;align-items:center;overflow-x:auto;scrollbar-width:none;padding-block:12px}
+nav.top .mark{font-family:var(--display);font-weight:900;font-stretch:115%;letter-spacing:.04em;color:var(--ember);text-decoration:none;flex:none}
+nav.top a.s{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-decoration:none;white-space:nowrap}
+nav.top a.s:hover{color:var(--ink)}
+
+/* hero */
+header.hero{padding-block:64px 40px;display:grid;gap:28px}
+.status{display:inline-flex;gap:10px;align-items:center;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ember);border:1px solid var(--ember);border-radius:999px;padding:5px 12px;justify-self:start}
+.status i{width:7px;height:7px;border-radius:50%;background:var(--ember)}
+.word{font-family:var(--display);font-weight:900;font-stretch:125%;font-size:clamp(64px,13vw,150px);line-height:.85;letter-spacing:-.01em}
+.word span{color:var(--ember)}
+.expand{font-family:var(--display);font-size:clamp(20px,2.6vw,28px);font-weight:500;font-stretch:90%;line-height:1.25;max-width:30ch}
+.expand b{color:var(--ember);font-weight:800}
+.byline{display:grid;gap:4px;padding-block:12px;border-block:1px solid var(--rule);justify-self:start}
+.byline strong{font-family:var(--display);font-size:20px;font-weight:700;font-stretch:95%}
+.byline span:last-child{color:var(--muted);font-size:15px}
+.lede{font-size:19px;max-width:62ch;color:var(--ink)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));border-top:2px solid var(--ink);margin-top:8px}
+.facts div{padding:14px 16px 14px 0;border-bottom:1px solid var(--rule);display:grid;gap:4px;align-content:start}
+.facts strong{font-family:var(--display);font-size:22px;font-weight:700;font-stretch:92%;line-height:1.15}
+
+section{padding-block:56px;border-top:1px solid var(--rule);display:grid;gap:28px}
+.sec-head{display:grid;gap:10px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.two>*{min-width:0}
+
+/* rationale */
+.evidence{display:grid;gap:0;border-top:1px solid var(--rule)}
+.ev{display:grid;grid-template-columns:150px 1fr;gap:20px;padding-block:20px;border-bottom:1px solid var(--rule)}
+.ev .fig{font-family:var(--display);font-weight:800;font-stretch:100%;font-size:34px;line-height:1;color:var(--ember)}
+.ev .fig small{display:block;font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.ev p+p{margin-top:6px;color:var(--muted);font-size:15px}
+@media (max-width:560px){.ev{grid-template-columns:1fr;gap:8px}}
+
+/* components */
+.comp{background:var(--surface);border:1px solid var(--rule);border-top:4px solid var(--c);padding:24px;display:grid;gap:14px;align-content:start}
+.comp.a{--c:var(--teal)} .comp.b{--c:var(--ember)}
+.comp .tag{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--c);font-weight:600}
+.comp ul{margin:0;padding-left:18px;display:grid;gap:4px}
+
+/* flow */
+.flow{display:grid;gap:0}
+.step{display:grid;grid-template-columns:28px 1fr;gap:14px}
+.step .dot{display:flex;flex-direction:column;align-items:center}
+.step .dot b{width:14px;height:14px;border-radius:50%;border:3px solid var(--c,var(--ink));background:var(--bg);margin-top:5px;flex:none}
+.step .dot i{flex:1;width:2px;background:var(--rule)}
+.step:last-child .dot i{display:none}
+.step .txt{padding-bottom:18px}
+.step .txt h3{font-size:17px}
+.step .txt p{color:var(--muted);font-size:15px}
+.branch{margin-top:8px;font-family:var(--mono);font-size:12px;color:var(--teal);border-left:2px solid var(--teal);padding-left:10px}
+
+/* timeline */
+.fig-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);padding:20px}
+.fig-wrap svg{display:block;min-width:760px;width:100%;height:auto}
+.t-lab{font-family:var(--mono);font-size:12px;fill:var(--muted);letter-spacing:.04em}
+.t-big{font-family:var(--display);font-size:15px;font-weight:700;fill:var(--ink)}
+.t-em{font-family:var(--display);font-size:14px;font-weight:700;fill:var(--ember)}
+.t-axis{stroke:var(--ink);stroke-width:2}
+.t-tick{stroke:var(--ink);stroke-width:2}
+.t-tx{fill:var(--ember-soft);stroke:var(--ember);stroke-width:1.5}
+.t-tp{fill:var(--ember)}
+.t-tpo{fill:var(--surface);stroke:var(--ink);stroke-width:2}
+.t-brk{fill:none;stroke:var(--ember);stroke-width:2}
+.t-dash{stroke:var(--muted);stroke-width:2;stroke-dasharray:4 5}
+.t-obs{fill:var(--teal-soft);stroke:var(--teal);stroke-width:1.5}
+.t-ol{fill:none;stroke:var(--ember);stroke-width:1.5;stroke-dasharray:5 4}
+.caption{font-size:14px;color:var(--muted);max-width:80ch}
+
+/* lists */
+.plain{margin:0;padding:0;list-style:none;display:grid;gap:0;border-top:1px solid var(--rule)}
+.plain li{padding:10px 0;border-bottom:1px solid var(--rule)}
+ol.num{margin:0;padding-left:22px;display:grid;gap:6px}
+ol.num li::marker{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.callout{background:var(--ember-soft);border-left:3px solid var(--ember);padding:16px 18px}
+.callout.t{background:var(--teal-soft);border-left-color:var(--teal)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--mono);font-size:13px;border:1px solid var(--rule);background:var(--surface);padding:6px 10px}
+
+/* outcomes */
+.og{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.og>div{background:var(--surface);padding:20px;display:grid;gap:10px;align-content:start}
+.og ul{margin:0;padding-left:18px;font-size:15px;display:grid;gap:3px}
+.og .key{background:var(--ember-soft)}
+.og .key h3{color:var(--ember)}
+
+/* open items table */
+.tbl{overflow-x:auto;border:1px solid var(--rule);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:15px}
+th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:400}
+td:first-child{font-weight:600}
+td .sec{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.own{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 7px;margin:0 4px 4px 0;border:1px solid var(--rule);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+
+/* pdf button */
+.pdf-btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--ember);border:1px solid var(--ember);padding:10px 16px;text-decoration:none;justify-self:start;cursor:pointer}
+.pdf-btn:hover{filter:brightness(1.08)}
+.pdf-btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2}
+
+.refs{font-size:15px}
+.refs li{padding-block:4px}
+footer{border-top:2px solid var(--ink);padding-block:28px 48px;font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+
+/* print / PDF */
+@media print{
+  :root{--bg:#FFFFFF;--surface:#FFFFFF;--ink:#13202A;--muted:#55636E;--rule:#C3CCD3;
+        --ember:#9E3309;--ember-soft:#F7EBE5;--teal:#0B5651;--teal-soft:#E8F2F1;color-scheme:light}
+  nav.top,.pdf-btn{display:none!important}
+  body{background:#fff;font-size:10.5pt;line-height:1.45;padding:0}
+  .wrap{max-width:100%}
+  header.hero{padding-block:0 18px;gap:14px}
+  .word{font-size:46pt;line-height:.9}
+  .expand{font-size:13pt}
+  .lede{font-size:11pt}
+  .facts strong{font-size:12pt}
+  section{padding-block:18px;page-break-inside:auto;break-inside:auto}
+  h2{font-size:17pt}
+  h3{font-size:11.5pt}
+  h2,h3{page-break-after:avoid;break-after:avoid}
+  .ev,.comp,.og>div,.callout,.mech,.step,.fig-wrap,tr{page-break-inside:avoid;break-inside:avoid}
+  .fig-wrap{overflow:visible;padding:10px}
+  .fig-wrap svg{min-width:0;width:100%}
+  .tbl{overflow:visible}
+  table{min-width:0;font-size:9.5pt}
+  .og{grid-template-columns:1fr 1fr}
+  a{text-decoration:none;color:var(--ink)}
+  footer{page-break-before:avoid}
+  @page{margin:14mm 13mm}
+}
+/* mechanism */
+.mech{display:grid;grid-template-columns:1fr auto 1fr;gap:0;border:1px solid var(--rule);background:var(--surface)}
+.mech>div{padding:20px;display:grid;gap:10px;align-content:start;min-width:0}
+.mech .arrow{display:flex;align-items:center;justify-content:center;padding:0 8px;font-family:var(--display);font-size:28px;color:var(--ember)}
+.mech ul{margin:0;padding-left:18px;font-size:15px;display:grid;gap:4px}
+.mech .gone{text-decoration:line-through;text-decoration-color:var(--teal);color:var(--muted)}
+.mech .new{color:var(--ember);font-weight:600}
+@media (max-width:640px){.mech{grid-template-columns:1fr}.mech .arrow{padding:4px;transform:rotate(90deg)}}
+.prog td:nth-child(2){color:var(--teal);font-weight:600}
+.prog td:nth-child(4){color:var(--ember);font-weight:600}
+</style>
+
+<nav class="top"><div class="wrap">
+  <a class="mark" href="#top">HOTFIRE</a>
+  <a class="s" href="#rationale">Rationale</a>
+  <a class="s" href="#design">Design</a>
+  <a class="s" href="#timeline">Timeline</a>
+  <a class="s" href="#objectives">Objectives</a>
+  <a class="s" href="#population">Population</a>
+  <a class="s" href="#outcomes">Outcomes</a>
+  <a class="s" href="#analysis">Analysis</a>
+  <a class="s" href="#safety">Safety &amp; ethics</a>
+  <a class="s" href="#open">Open items</a>
+</div></nav>
+
+<div class="wrap" id="top">
+<header class="hero">
+  <span class="status"><i></i>Draft protocol · investigator and IRB review</span>
+  <div class="word">HOT<span>FIRE</span></div>
+  <p class="expand"><b>H</b>ormonal <b>O</b>ptimization of Lung <b>T</b>ransplant Recipients <b>F</b>or <b>I</b>mprovements in <b>R</b>ehab and <b>E</b>xercise Capacity</p>
+  <p class="byline"><span class="label">Principal Investigator</span><strong>Diego Marin, DO, FCCP</strong><span>Pulmonary and Critical Care Medicine</span></p>
+  <p class="lede">New lungs don't bring back lost muscle. After transplant, recovery is limited by skeletal muscle, and the androgen axis that helps maintain it often stays suppressed. HOTFIRE follows every adult we evaluate to learn how often and why that happens. Within that cohort, a double-blind pilot of 20 listed men tests whether testosterone can be delivered safely from listing through 12 weeks after transplant, and estimates its effect on strength and walking.</p>
+  <a class="pdf-btn" href="hotfire-protocol.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 20h16"/></svg>Download PDF</a>
+  <div class="facts">
+    <div><span class="label">Design</span><strong>Cohort + embedded RCT pilot</strong></div>
+    <div><span class="label">Randomized</span><strong class="tn">20 men · 1:1</strong></div>
+    <div><span class="label">Intervention</span><strong>Testosterone cypionate</strong></div>
+    <div><span class="label">Blinded treatment</span><strong>Listing to 12 wk post-tx</strong></div>
+    <div><span class="label">Setting</span><strong class="tn">Academic institution with <span style="white-space:nowrap">~85 transplants / yr</span></strong></div>
+    <div><span class="label">Follow-up</span><strong class="tn">Up to 24 months</strong></div>
+  </div>
+</header>
+
+<section id="rationale">
+  <div class="sec-head"><span class="label">1 · Background</span><h2>Transplant replaces the lungs. It doesn't reset the axis.</h2></div>
+  <div class="evidence">
+    <div class="ev"><div class="fig tn">HR 7.5<small>frailty, 1-yr death</small></div><div><p>Muscle limits recovery after transplant, and pre-transplant frailty predicts death. In 386 recipients, frailty by SPPB carried an adjusted 1-year mortality HR of 7.5 (95% CI 1.6–36.0).</p><p><a href="https://doi.org/10.1111/ajt.14873" target="_blank" rel="noopener">Singer 2018</a> · peripheral muscle oxidative capacity stays low after transplant (<a href="https://doi.org/10.1164/ajrccm.160.1.9805092" target="_blank" rel="noopener">Wang 1999</a>)</p></div></div>
+    <div class="ev"><div class="fig tn">89%<small>hypogonadotropic</small></div><div><p>Hypogonadism in lung disease is mostly central. 41.8% of men with COPD were hypogonadal vs 10.0% of controls, and nearly 9 in 10 had low or inappropriately normal gonadotropins.</p><p><a href="https://doi.org/10.1016/j.endien.2024.09.006" target="_blank" rel="noopener">Castro 2024</a> · testosterone tracks PaO₂ (<a href="https://thorax.bmj.com/content/39/1/46" target="_blank" rel="noopener">Semple 1984</a>) and falls with steroid dose, r = −0.78 (<a href="https://pubmed.ncbi.nlm.nih.gov/3083749/" target="_blank" rel="noopener">MacAdams 1986</a>)</p></div></div>
+    <div class="ev"><div class="fig">IPF<small>not just COPD</small></div><div><p>The premise holds in fibrosis, which matters at an IPF-heavy center. Men with IPF have lower testosterone and DHT than age-matched controls, and testosterone tracks leukocyte telomere length. Genetically higher testosterone is associated with lower IPF risk (OR 0.41, 95% CI 0.19–0.91), with no reverse effect.</p><p><a href="https://doi.org/10.1111/resp.13871" target="_blank" rel="noopener">Fang 2020</a> · <a href="https://doi.org/10.1186/s12890-024-03198-0" target="_blank" rel="noopener">Xu 2024</a> · about a third of chronic ILD patients are sarcopenic (<a href="https://doi.org/10.1183/16000617.0126-2024" target="_blank" rel="noopener">Sheehy 2024</a>). All observational or genetic — no interventional trial exists.</p></div></div>
+    <div class="ev"><div class="fig tn">41%<small>still low after</small></div><div><p>In 51 men tested before and after transplant, mean testosterone went from 330 to 355 ng/dL (p = 0.48). The share below 300 fell only from 51% to 41%.</p><p><a href="https://doi.org/10.1038/s41443-024-00921-7" target="_blank" rel="noopener">Thompson 2025</a> · indication-driven testing, single unstandardized draws, no LH/FSH</p></div></div>
+    <div class="ev"><div class="fig tn">+3.5%<small>lean mass on prednisone</small></div><div><p>Steroid-treated patients respond to androgens. Men on about 12.6 mg/day prednisone gained 3.5% lean mass on testosterone vs −0.9% on placebo, with better strength. In COPD rehab, nandrolone restored the training response in steroid users: +20 W vs +5 W peak workload.</p><p><a href="https://doi.org/10.1210/jc.2002-021827" target="_blank" rel="noopener">Crawford 2003</a> · <a href="https://doi.org/10.1378/chest.124.5.1733" target="_blank" rel="noopener">Creutzberg 2003</a></p></div></div>
+  </div>
+  <div class="mech" aria-label="Axis suppressors before and after transplant">
+    <div><span class="label">Before transplant</span><ul><li class="gone">Hypoxemia</li><li>Systemic inflammation</li><li>Intermittent steroids</li><li>Cachexia, deconditioning</li></ul></div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div><span class="label">After transplant</span><ul><li class="new">Daily prednisone</li><li class="new">Calcineurin inhibitors</li><li class="new">Critical illness, opioids</li><li class="new">Kidney injury</li></ul></div>
+  </div>
+  <p class="col">Transplant removes hypoxemia but adds a new set of axis suppressors, so persistent hypogonadism is what physiology predicts. Every recipient takes glucocorticoids, which makes the steroid-treated trials, not the COPD trials, the closest evidence for this study. An IPF-heavy cohort sharpens the contrast: unlike COPD patients, who often arrive on maintenance steroids, IPF patients generally are not on chronic glucocorticoids before transplant and all are after it.</p>
+  <div class="callout t col"><span class="label" style="color:var(--teal)">What argues against</span>
+    <p style="margin-top:6px;font-size:16px">Male sex hormones worsened lung mechanics after bleomycin-induced fibrosis in mice. Castration protected the animals and DHT restored the male pattern, though fibrosis scores themselves did not change (<a href="https://doi.org/10.1165/rcmb.2007-0340OC" target="_blank" rel="noopener">Voltz 2008</a>). Danazol has also performed poorly in IPF: of 50 patients on antifibrotics, 22% were still taking it at one year and mean FVC fell 485 mL, and it is generally avoided after transplant over MDS and AML risk (<a href="https://doi.org/10.3390/jcm14051496" target="_blank" rel="noopener">Southern 2025</a>).</p>
+    <p style="margin-top:8px;font-size:16px">Neither is decisive here. Danazol at 800 mg/day is an attenuated synthetic androgen, not physiologic replacement, and after bilateral transplant no fibrotic lung remains. Both still need an answer, and single-lung recipients retain a native fibrotic lung, which is why transplant type is recorded and analyzed separately.</p>
+  </div>
+</section>
+
+<section id="design">
+  <div class="sec-head"><span class="label">3 · Study design</span><h2>Two linked components, analyzed separately</h2></div>
+  <div class="two">
+    <div class="comp a">
+      <span class="tag">Component A · Observational cohort</span>
+      <h3>Everyone we evaluate, men and women</h3>
+      <p>Defines how often hypogonadism occurs, whether it is central or primary, and how it changes through 24 months. Tests whether post-transplant testosterone tracks cumulative prednisone and recovers as steroids taper.</p>
+    </div>
+    <div class="comp b">
+      <span class="tag">Component B · Randomized pilot</span>
+      <h3>Listed men with confirmed, deferrable hypogonadism</h3>
+      <p>1:1 to testosterone cypionate or matched placebo from randomization through 12 weeks after transplant, with usual care and rehab. Stratified by maintenance oral steroids at listing. Pharmacy holds the allocation; an unblinded titrator gives placebo patients sham dose changes. Everyone is unblinded once T3 is complete and offered open-label treatment.</p>
+    </div>
+  </div>
+
+  <div class="two">
+    <div class="flow" aria-label="Pathway to randomization">
+      <span class="label" style="margin-bottom:14px">Pathway to randomization</span>
+      <div class="step" style="--c:var(--teal)"><div class="dot"><b></b><i></i></div><div class="txt"><h3>Transplant evaluation</h3><p>Adults 18 and older consent to the cohort.</p></div></div>
+      <div class="step" style="--c:var(--teal)"><div class="dot"><b></b><i></i></div><div class="txt"><h3>Baseline hormone panel</h3><p>Total and free T, SHBG, LH, FSH, estradiol.</p></div></div>
+      <div class="step"><div class="dot"><b></b><i></i></div><div class="txt"><h3>Men: total T below 300 ng/dL twice</h3><p>Fasting morning samples on separate days, with symptoms, outside acute illness. Done during evaluation, not after listing.</p></div></div>
+      <div class="step"><div class="dot"><b></b><i></i></div><div class="txt"><h3>Listed · endocrinology confirms</h3><p>Diagnosis confirmed and treatment can safely be deferred. Confirmation is finished before listing so randomization isn't the bottleneck.</p><p class="branch">Otherwise → clinical care, stays in Component A</p></div></div>
+      <div class="step" style="--c:var(--ember)"><div class="dot"><b></b><i></i></div><div class="txt"><h3>Randomize 1:1, double-blind</h3><p>Stratified by maintenance oral steroids.</p></div></div>
+    </div>
+    <div style="display:grid;gap:18px;align-content:start">
+      <span class="label">Regimen (adapted from FORTIFY)</span>
+      <div class="tbl"><table style="min-width:0">
+        <tbody>
+          <tr><td>Duration</td><td>Randomization through 12 wk post-transplant</td></tr>
+          <tr><td>Start</td><td>100 mg IM weekly</td></tr>
+          <tr><td>Week 6</td><td>Trough T: below 400 → 150 mg; above 700 → 75 mg</td></tr>
+          <tr><td>Route</td><td>SC at same dose if anticoagulated or platelets below 50,000/µL</td></tr>
+          <tr><td>Hold</td><td>Hct above 54%, new VTE, AF needing treatment, AKI stage 2+</td></tr>
+          <tr><td>Tacrolimus</td><td>Trough checked with every study T draw</td></tr>
+          <tr><td>At T3</td><td>Unblind; continue or cross over to open label</td></tr>
+        </tbody>
+      </table></div>
+      <p style="font-size:15px;color:var(--muted)">Usual prehab and post-transplant rehab in both arms, logged by session, exercise type and attendance.</p>
+    </div>
+  </div>
+</section>
+
+<section id="timeline">
+  <div class="sec-head"><span class="label">5–6 · Treatment and assessments</span><h2>One participant, start to finish</h2></div>
+  <div class="fig-wrap">
+    <svg viewBox="0 0 960 280" role="img" aria-label="Participant timeline: blinded treatment from randomization at listing through 12 weeks after transplant, held around surgery, then unblinding and open-label treatment">
+      <rect class="t-obs" x="40" y="188" width="890" height="16" rx="2"/>
+      <text class="t-lab" x="40" y="224">COMPONENT A · HORMONES AND FUNCTION THROUGH 24 MO</text>
+      <rect class="t-tx" x="190" y="134" width="240" height="16" rx="2"/>
+      <rect class="t-tx" x="530" y="134" width="210" height="16" rx="2"/>
+      <rect class="t-ol" x="740" y="134" width="190" height="16" rx="2"/>
+      <text class="t-lab" x="190" y="126">BLINDED TREATMENT</text>
+      <text class="t-lab" x="746" y="126">OPEN LABEL</text>
+      <text class="t-lab" x="462" y="146">held</text>
+      <line class="t-axis" x1="40" y1="100" x2="190" y2="100"/>
+      <line class="t-dash" x1="190" y1="100" x2="430" y2="100"/>
+      <line class="t-axis" x1="430" y1="100" x2="930" y2="100"/>
+      <text class="t-lab" x="310" y="92" text-anchor="middle">variable wait</text>
+      <circle class="t-tpo" cx="40" cy="100" r="7"/>
+      <text class="t-big" x="40" y="252" text-anchor="start">Evaluation</text>
+      <circle class="t-tp" cx="190" cy="100" r="11"/>
+      <text class="t-em" x="190" y="60" text-anchor="middle">T1</text>
+      <text class="t-big" x="190" y="252" text-anchor="middle">Randomize</text>
+      <line class="t-tick" x1="430" y1="82" x2="430" y2="118"/>
+      <text class="t-big" x="430" y="252" text-anchor="middle">Transplant</text>
+      <circle class="t-tp" cx="530" cy="100" r="11"/>
+      <text class="t-em" x="530" y="60" text-anchor="middle">T2</text>
+      <text class="t-big" x="530" y="252" text-anchor="middle">Early post-tx</text>
+      <circle class="t-tp" cx="740" cy="100" r="11"/>
+      <text class="t-em" x="740" y="60" text-anchor="middle">T3</text>
+      <text class="t-big" x="740" y="252" text-anchor="middle">12 wk post-tx</text>
+      <text class="t-lab" x="740" y="270" text-anchor="middle">unblind · cross over</text>
+      <circle class="t-tpo" cx="930" cy="100" r="7"/>
+      <text class="t-big" x="930" y="252" text-anchor="end">24 mo</text>
+      <path class="t-brk" d="M530 40 V30 H740 V40"/>
+      <text class="t-em" x="635" y="20" text-anchor="middle">Exploratory: Δ grip, Δ 6MWD</text>
+    </svg>
+  </div>
+  <p class="caption">Blinded treatment runs from randomization at listing through 12 weeks after transplant. Drug is held from the call to transplant and restarts once the patient is extubated 48 hours, off vasopressors and ECMO, not bleeding, and cleared by the transplant team; that visit opens T2. Once T3 assessments are complete, everyone is unblinded: patients on active drug may continue it with endocrinology, and those on placebo may cross over. With the median wait now under a month, most exposure falls after transplant — roughly 2–4 weeks listed, a 2–6 week hold, then about 10 weeks to T3, for 12–14 weeks in total.</p>
+  <div class="two">
+    <div><h3 style="margin-bottom:8px">Why hold after surgery</h3><p style="font-size:15px">Anabolic treatment in acute critical illness has backfired before: growth hormone roughly doubled ICU mortality (<a href="https://doi.org/10.1056/NEJM199909093411102" target="_blank" rel="noopener">Takala 1999</a>). Testosterone also raises AF, AKI and PE risk, all common right after transplant.</p></div>
+    <div><h3 style="margin-bottom:8px">Why T2 → T3</h3><p style="font-size:15px">New lungs push 6MWD up regardless of drug. Starting the clock once patients are stable isolates muscle recovery. T1 → T3 stays secondary.</p></div>
+  </div>
+</section>
+
+<section id="objectives">
+  <div class="sec-head"><span class="label">2 · Objectives</span><h2>Feasibility first, with a muscle signal</h2></div>
+  <div class="two">
+    <div class="comp a"><span class="tag">Component A</span><p>Define prevalence, type and course of hypogonadism from evaluation to 24 months.</p><ul><li>A1: most hypogonadism is hypogonadotropic at evaluation</li><li>A2: post-transplant hypogonadism tracks with cumulative prednisone</li></ul></div>
+    <div class="comp b"><span class="tag">Component B · primary</span><p>Show that a blinded trial can recruit, retain, dose and stay blinded from listing through 12 weeks after transplant, safely.</p></div>
+  </div>
+  <div class="callout"><span class="label" style="color:var(--ember)">Exploratory efficacy outcomes</span><p style="margin-top:6px">Between-group difference in change from T2 to T3 in <strong>grip strength</strong> (kg) and <strong>6MWD</strong> (m). At 10 men per arm these estimate direction and variance; they cannot test efficacy. Both are tracked because anabolic trials in lung disease move strength more reliably than walk distance (<a href="https://doi.org/10.3389/fmed.2022.915159" target="_blank" rel="noopener">Liu 2022</a>; <a href="https://doi.org/10.1371/journal.pone.0084855" target="_blank" rel="noopener">Pan 2014</a>).</p></div>
+  <p class="col" style="font-style:italic;color:var(--muted)">A rise in testosterone without better strength or walking will not count as success.</p>
+</section>
+
+<section id="population">
+  <div class="sec-head"><span class="label">4 · Population</span><h2>Who enters the randomized pilot</h2></div>
+  <div class="two">
+    <div><h3 style="margin-bottom:12px">Inclusion · all required</h3>
+      <ul class="plain">
+        <li>Man 18 or older, formally listed at the center</li>
+        <li>Symptoms plus total T below 300 ng/dL on two fasting morning samples</li>
+        <li>Endocrinology confirms diagnosis and that treatment can be deferred</li>
+        <li>No testosterone or anabolic agent in the prior 3 months</li>
+        <li>Can do grip and 6MWD at listing; can consent</li>
+      </ul></div>
+    <div><h3 style="margin-bottom:12px">Exclusion</h3>
+      <ul class="plain">
+        <li>Prostate, breast or other hormone-sensitive cancer</li>
+        <li>PSA above 4 ng/mL (3 if higher risk) or nodule without urology clearance</li>
+        <li>Hematocrit above 50%</li>
+        <li>MI, stroke or unstable angina within 6 months; decompensated heart failure</li>
+        <li>Prior unprovoked VTE or known thrombophilia</li>
+        <li>Untreated severe OSA; fertility desired during study</li>
+      </ul>
+    </div>
+  </div>
+  <p class="col" style="font-size:15px;color:var(--muted)">Transplant type is not an eligibility criterion. Single and bilateral recipients are both included, transplant type is recorded for everyone, and outcomes are reported for each group separately and combined.</p>
+</section>
+
+<section id="outcomes">
+  <div class="sec-head"><span class="label">7 · Outcomes</span><h2>What gets measured</h2></div>
+  <div class="og">
+    <div><h3>Feasibility</h3><ul><li>Eligible men randomized</li><li>Retention to T3 or study exit</li><li>Doses given vs scheduled</li><li>Days to transplant, and total blinded days</li><li>Restart by postoperative day 30</li><li>T2 and T3 data completeness</li><li>Blinding guess at T3, before unblinding</li><li>Open-label uptake and crossover</li></ul></div>
+    <div class="key"><h3>Exploratory efficacy</h3><ul><li>Δ grip strength, T2 → T3</li><li>Δ 6MWD, T2 → T3</li></ul><h3 style="font-size:16px;color:var(--ink);margin-top:6px">Secondary</h3><ul><li>Grip and 6MWD, T1 → T3</li><li>Quadriceps strength, SPPB</li><li>FACIT-Fatigue</li><li>LT-QOL (<a href="https://doi.org/10.1164/rccm.201806-1198OC" target="_blank" rel="noopener">built for recipients</a>)</li><li>Thoracic muscle area on clinical CT</li><li>Days to independent ambulation</li></ul></div>
+    <div><h3>Clinical course</h3><ul><li>ICU and hospital length of stay</li><li>Ventilator days</li><li>Discharge home</li><li>90-day readmission</li></ul></div>
+    <div><h3>Prespecified safety</h3><ul><li>Atrial fibrillation or flutter</li><li>AKI, KDIGO stage 2+</li><li>Venous thromboembolism</li><li>Hct above 54%, PSA rise above 1.4 ng/mL</li><li>Rejection, infection, tacrolimus out of range</li><li>MI, stroke, death</li></ul></div>
+  </div>
+  <p class="caption">The first three safety events are the ones testosterone increased in TRAVERSE (AF 3.5% vs 2.4%, AKI 2.3% vs 1.5%, PE 0.9% vs 0.5%), and all three are common after lung transplant (<a href="https://doi.org/10.1056/NEJMoa2215025" target="_blank" rel="noopener">Lincoff 2023</a>; VTE 29%, <a href="https://pubmed.ncbi.nlm.nih.gov/17403474/" target="_blank" rel="noopener">Kahan 2007</a>).</p>
+</section>
+
+<section id="analysis">
+  <div class="sec-head"><span class="label">8 · Statistical analysis</span><h2>Sized to test feasibility, not efficacy</h2></div>
+  <div class="two">
+    <div style="display:grid;gap:14px">
+      <p><strong>Precision.</strong> With 10 men per arm, 80% power reaches only about 119 m in 6MWD or 6.6 kg in grip (assumed SDs of change 90 m and 5 kg) — far above anything the literature reports. Against plausible effects, power is roughly 11% for 30 m and 14% for 2 kg, and the 95% CI on the difference spans about ±85 m and ±4.7 kg. The pilot's job is to replace those assumed SDs with real ones. A definitive trial powered for 30 m needs about 140 per arm.</p>
+      <p><strong>Accrual.</strong> 85 transplants a year × 57% men (this center) × 45% hypogonadal gives a pool of about 22 a year. Twenty randomized takes 1.8 years at 50% consent, 2.6 at 35%, 3.7 at 25%. With the median wait under a month, each patient reaches T3 about 4 months after randomization, so the trial closes ~4 months after the last enrollment.</p>
+      <p><strong>Functional analysis set.</strong> Only men transplanted with both T2 and T3 contribute. Expect roughly 14 to 16 men, 7 to 8 per arm. All 20 contribute to feasibility, which is the point.</p>
+    </div>
+    <div style="display:grid;gap:14px">
+      <p><strong>Analysis.</strong> ANCOVA of T3 adjusted for T2 and stratum, among transplanted men with data. Transplant and survival happen after randomization, so the report also gives full disposition by arm, a mixed model of all T1–T3 data, and multiple imputation.</p>
+      <p><strong>Component A.</strong> Exact-CI prevalence; mixed model of testosterone with time-varying prednisone, tacrolimus, opioid, eGFR and BMI.</p>
+      <p><strong>Transplant type.</strong> Single and bilateral recipients are both eligible. Functional, clinical and safety outcomes are reported separately for each and combined.</p>
+    </div>
+  </div>
+  <div class="tbl prog"><table>
+    <thead><tr><th>Progression criterion</th><th>Go</th><th>Modify</th><th>Stop</th></tr></thead>
+    <tbody>
+      <tr><td>Eligible men randomized</td><td>≥ 40%</td><td>25–39%</td><td>&lt; 25%</td></tr>
+      <tr><td>Randomized men retained to T3 or exit</td><td>≥ 85%</td><td>70–84%</td><td>&lt; 70%</td></tr>
+      <tr><td>Transplanted men with complete T2 and T3</td><td>≥ 80%</td><td>65–79%</td><td>&lt; 65%</td></tr>
+      <tr><td>Scheduled doses given</td><td>≥ 80%</td><td>65–79%</td><td>&lt; 65%</td></tr>
+      <tr><td>Restarted by postoperative day 30</td><td>≥ 75%</td><td>50–74%</td><td>&lt; 50%</td></tr>
+      <tr><td>Safety board review</td><td>No signal</td><td>Fixable by protocol change</td><td>Unacceptable harm</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="safety">
+  <div class="sec-head"><span class="label">9 · Safety and ethics</span><h2>Clinical care comes first</h2></div>
+  <div class="two">
+    <div style="display:grid;gap:12px"><h3>Safety monitoring</h3>
+      <p style="font-size:16px">An independent board (transplant pulmonologist, endocrinologist, statistician) reviews unblinded AF, AKI and VTE rates every 6 months and after every 5 transplanted participants. Functional tests are run by assessors blinded to allocation and outside the patient's clinical care.</p></div>
+    <div style="display:grid;gap:12px"><h3>Ethics</h3>
+      <p style="font-size:16px">We randomize only when endocrinology judges treatment can wait. Anyone who needs testosterone gets it and stays in the cohort. The blinded period ends 12 weeks after transplant, when every participant is unblinded and offered open-label testosterone whatever their assignment. Consent covers the TRAVERSE signals, sham dose changes, holds around surgery, fertility suppression, and the chance of never being transplanted.</p></div>
+  </div>
+</section>
+
+<section id="open">
+  <div class="sec-head"><span class="label">For reviewers</span><h2>Defaults to confirm</h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Item</th><th>Default in this draft</th><th>Owner</th></tr></thead>
+    <tbody>
+      <tr><td>Accrual</td><td>Pool of ~22 eligible men a year (85 transplants, 57% men, 45% hypogonadal); 20 randomized in 1.8–3.7 years. Confirm the hypogonadism and consent assumptions against center data</td><td><span class="own">PI</span></td></tr>
+      <tr><td>Treatment duration</td><td>Blinded from randomization to T3, 12 weeks post-transplant, then unblinding and an open-label offer</td><td><span class="own">PI</span><span class="own">Endocrinology</span></td></tr>
+      <tr><td>Screening-to-listing timing</td><td>Screening and endocrine confirmation finished during evaluation, so randomization isn't the rate-limiting step before a short wait ends in transplant</td><td><span class="own">PI</span><span class="own">Endocrinology</span></td></tr>
+      <tr><td>Titration and Hct thresholds</td><td>Trough 400–700 ng/dL; exclude Hct above 50%, hold above 54%</td><td><span class="own">Endocrinology</span><span class="own">Pharmacy</span></td></tr>
+      <tr><td>Restart after transplant</td><td>Extubated 48 h, off pressors and ECMO, no bleeding</td><td><span class="own">Transplant</span></td></tr>
+      <tr><td>Stratification</td><td>Maintenance oral steroids at listing</td><td><span class="own">Biostatistics</span></td></tr>
+      <tr><td>CT muscle method</td><td>Thoracic muscle area on clinical chest CT</td><td><span class="own">Investigators</span></td></tr>
+      <tr><td>Safety board</td><td>Transplant pulmonologist, endocrinologist, statistician</td><td><span class="own">PI</span><span class="own">IRB</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="significance">
+  <div class="sec-head"><span class="label">10 · Significance</span><h2>The first map of the axis across transplant</h2></div>
+  <p class="col">If post-transplant hypogonadism is a predictable effect of steroid-based immunosuppression, it becomes a screenable, treatable cause of poor recovery. A literature search found no randomized trial of testosterone in lung transplant; the nearest is a phase 1 kidney-candidate study with historical controls (<a href="https://clinicaltrials.gov/study/NCT07287800" target="_blank" rel="noopener">NCT07287800</a>).</p>
+  <div><span class="label">Key references</span>
+  <ol class="num refs" style="margin-top:10px">
+    <li><a href="https://doi.org/10.1038/s41443-024-00921-7" target="_blank" rel="noopener">Thompson A, et al. Post-transplant testosterone in men undergoing lung transplantation (TriNetX). Int J Impot Res 2025</a></li>
+    <li><a href="https://doi.org/10.1016/j.endien.2024.09.006" target="_blank" rel="noopener">Castro HM, et al. Prevalence of hypogonadism in men with and without COPD. Endocrinol Diabetes Nutr 2024</a></li>
+    <li><a href="https://doi.org/10.1111/resp.13871" target="_blank" rel="noopener">Fang C, et al. Sex hormones and leucocyte telomere length in men with IPF. Respirology 2020</a></li>
+    <li><a href="https://doi.org/10.1186/s12890-024-03198-0" target="_blank" rel="noopener">Xu Q, et al. Testosterone, estradiol, estrogen sulfotransferase and IPF: bidirectional Mendelian randomization. BMC Pulm Med 2024</a></li>
+    <li><a href="https://doi.org/10.1183/16000617.0126-2024" target="_blank" rel="noopener">Sheehy R, et al. Sarcopenia in interstitial lung disease. Eur Respir Rev 2024</a></li>
+    <li><a href="https://doi.org/10.1165/rcmb.2007-0340OC" target="_blank" rel="noopener">Voltz JW, et al. Male sex hormones exacerbate lung function impairment after bleomycin-induced pulmonary fibrosis. Am J Respir Cell Mol Biol 2008</a></li>
+    <li><a href="https://doi.org/10.3390/jcm14051496" target="_blank" rel="noopener">Southern BD, Gadre SK. Telomeropathies in interstitial lung disease and lung transplant recipients. J Clin Med 2025</a></li>
+    <li><a href="https://pubmed.ncbi.nlm.nih.gov/3083749/" target="_blank" rel="noopener">MacAdams MR, et al. Reduction of serum testosterone during chronic glucocorticoid therapy. Ann Intern Med 1986</a></li>
+    <li><a href="https://doi.org/10.1210/jc.2002-021827" target="_blank" rel="noopener">Crawford BAL, et al. Androgen effects on muscle and bone in men on long-term glucocorticoids. JCEM 2003</a></li>
+    <li><a href="https://doi.org/10.1378/chest.124.5.1733" target="_blank" rel="noopener">Creutzberg EC, et al. Anabolic steroids in COPD rehabilitation. Chest 2003</a></li>
+    <li><a href="https://doi.org/10.1164/rccm.200305-617OC" target="_blank" rel="noopener">Casaburi R, et al. Testosterone and resistance training in men with COPD. AJRCCM 2004</a></li>
+    <li><a href="https://doi.org/10.3389/fmed.2022.915159" target="_blank" rel="noopener">Liu Y, et al. Anabolic-androgenic steroids for COPD: meta-analysis. Front Med 2022</a></li>
+    <li><a href="https://doi.org/10.1111/ajt.14873" target="_blank" rel="noopener">Singer JP, et al. Frailty phenotypes and mortality after lung transplantation. AJT 2018</a></li>
+    <li><a href="https://jtd.amegroups.org/article/view/90680/html" target="_blank" rel="noopener">Wang P, et al. Pulmonary rehabilitation after lung transplantation: meta-analysis. J Thorac Dis 2024</a></li>
+    <li><a href="https://doi.org/10.1056/NEJMoa2215025" target="_blank" rel="noopener">Lincoff AM, et al. Cardiovascular safety of testosterone replacement (TRAVERSE). NEJM 2023</a></li>
+    <li><a href="https://doi.org/10.1210/jc.2018-00229" target="_blank" rel="noopener">Bhasin S, et al. Testosterone therapy in men with hypogonadism: Endocrine Society guideline. JCEM 2018</a></li>
+    <li><a href="https://doi.org/10.1136/bmj.i5239" target="_blank" rel="noopener">Eldridge SM, et al. CONSORT extension to randomised pilot and feasibility trials. BMJ 2016</a></li>
+  </ol></div>
+</section>
+
+<footer>
+  <span>HOTFIRE · Draft protocol · Diego Marin, DO, FCCP</span>
+  <span>Not a treatment order or approved clinical protocol</span>
+</footer>
+</div>
